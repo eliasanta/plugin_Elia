@@ -29,9 +29,10 @@ if (!defined('ABSPATH')) {
 }
 class EliaPlugin
 {
-
+    public $plugin;
     function __construct()
     { //object oriented programming way
+        $this->plugin = plugin_basename(__FILE__); //nome del file plugin
         $this->create_post_type(); //imposto create_post_type protected in modo che non possano accedere esternamente
     }
     public function register()
@@ -40,6 +41,17 @@ class EliaPlugin
         //wp_enqueue_scripts per il frontend
         add_action('admin_enqueue_scripts', array($this, 'enqueue'));
         add_action('admin_menu', array($this, 'add_admin_pages'));
+
+        add_filter("plugin_action_links_$this->plugin", array($this, 'settings_link'));
+    }
+    public function settings_link($links)
+    {
+        //add custom settings link
+        $settings_link = '<a href="admin.php?page=elia_plugin">Settings</a>';
+        //aggiungo alla mia lista di link il link che ho settato
+        array_push($links, $settings_link); //aggiungo all'array e lo ritorno
+
+        return $links;
     }
     public function add_admin_pages()
     {
